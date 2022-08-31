@@ -3,7 +3,7 @@ const http = require("http")
 const url = require("url")
 const { refreshToken } = require("./apiSet")
 const { getDeals } = require("./getFromApi")
-const port = 3001
+const port = process.env.PORT || 5000
 
 let timeToRefresh = false
 

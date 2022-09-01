@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000
 
 let timeToRefresh = false
 
-setTimeout(() => (timeToRefresh = true), 86000)
+setTimeout(() => (timeToRefresh = true), 80000)
 
 const requestHandler = async (request, response) => {
   const queryObject = url.parse(request.url, true)

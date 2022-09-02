@@ -3,14 +3,15 @@ const http = require("http")
 const url = require("url")
 const { refreshToken } = require("./apiSet")
 const { getDeals } = require("./getFromApi")
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5001
 
 let timeToRefresh = false
 
-setTimeout(() => (timeToRefresh = true), 80000)
+setTimeout(() => (timeToRefresh = true), 80000000)
 
 const requestHandler = async (request, response) => {
   const queryObject = url.parse(request.url, true)
+  console.log(request.method + " " + queryObject.pathname)
   if (request.method === "GET" && queryObject.pathname === "/api/leads") {
     try {
       const headers = {
@@ -28,6 +29,7 @@ const requestHandler = async (request, response) => {
       }
       response.end(JSON.stringify(json_response))
     } catch (e) {
+      console.log("errrrrr")
       response.end(JSON.stringify(e))
       if (timeToRefresh) {
         refreshToken()

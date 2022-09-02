@@ -1,4 +1,4 @@
-const { api } = require("./apiSet")
+const { api, keys } = require("./apiSet")
 
 let statusesInfoArray = []
 let contactsInfoList = []
@@ -6,7 +6,10 @@ let responsesInfoList = []
 
 async function getDeals(query) {
   const resultArray = []
-  const { data } = await api.get(`/api/v4/leads?with=contacts&query=${query}`)
+  const { data } = await api.get(
+    `/api/v4/leads?with=contacts&query=${query || ""}`,
+    { headers: { Authorization: `Bearer ${keys.token}` } }
+  )
   if (data._embedded && data._embedded.leads && data._embedded.leads.length) {
     for (const [i, value] of data._embedded.leads.entries()) {
       try {
@@ -20,8 +23,12 @@ async function getDeals(query) {
         if (i === 0) {
           const [{ data: statusesInfo }, { data: listOfContacts }] =
             await Promise.all([
-              api.get(`/api/v4/leads/pipelines/${value.pipeline_id}`),
-              api.get("api/v4/contacts"),
+              api.get(`/api/v4/leads/pipelines/${value.pipeline_id}`, {
+                headers: { Authorization: `Bearer ${keys.token}` },
+              }),
+              api.get("api/v4/contacts", {
+                headers: { Authorization: `Bearer ${keys.token}` },
+              }),
             ])
           statusesInfoArray = statusesInfo._embedded.statuses
           contactsInfoList = listOfContacts._embedded.contacts
@@ -42,7 +49,8 @@ async function getDeals(query) {
           resultDealInfo.responsibleUserName = findResponseUser.name
         } else {
           const { data: responsibleUser } = await api.get(
-            `/api/v4/users/${value.responsible_user_id}`
+            `/api/v4/users/${value.responsible_user_id}`,
+            { headers: { Authorization: `Bearer ${keys.token}` } }
           )
           resultDealInfo.responsibleUserName = responsibleUser.name
         }
